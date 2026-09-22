@@ -3,57 +3,59 @@ package id.ac.polinema.lumajang.portalku.pengumuman;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import id.ac.polinema.lumajang.portalku.kategori.Kategori;
+import id.ac.polinema.lumajang.portalku.kategori.KategoriRepository;
+import id.ac.polinema.lumajang.portalku.pengumuman.dto.PengumumanRequest;
+import id.ac.polinema.lumajang.portalku.pengumuman.dto.PengumumanResponse;
+import id.ac.polinema.lumajang.portalku.pengumuman.dto.PengumumanRingkasResponse;
+import id.ac.polinema.lumajang.portalku.shared.KategoriTidakDitemukanException;
+import id.ac.polinema.lumajang.portalku.shared.PengumumanTidakDitemukanException;
+
+import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class PengumumanService {
-
-    // Memanfaatkan dependency injection berbasis konstruktor dari Lombok
     private final PengumumanRepository pengumumanRepository;
+    private final KategoriRepository kategoriRepository;
+    private final PengumumanMapper mapper;
 
-    public List<PengumumanDTO> cariSemua() {
-        // Menggunakan JOIN FETCH untuk mencegah N+1
+    public List<PengumumanRingkasResponse> cariSemua() {
         return pengumumanRepository.findAllWithKategori().stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
+                .map(mapper::keRingkas)
+                .toList();
     }
 
-    public PengumumanDTO tambah(Pengumuman pengumuman) {
-        pengumuman.setId(null); // Memastikan ini data baru, bukan update
-        Pengumuman tersimpan = pengumumanRepository.save(pengumuman);
-        return convertToDTO(tersimpan);
+    public PengumumanResponse cariSatu(Integer id) {
+        return mapper.keResponse(ambilAtauGagal(id));
     }
 
+    @Transactional
+    public PengumumanResponse tambah(PengumumanRequest req) {
+        Kategori kategori = kategoriRepository.findById(req.idKategori())
+                .orElseThrow(() -> new KategoriTidakDitemukanException(req.idKategori()));
+        Pengumuman baru = mapper.keEntity(req, kategori);
+        return mapper.keResponse(pengumumanRepository.save(baru));
+    }
+
+    @Transactional
+    public PengumumanResponse ubah(Integer id, PengumumanRequest req) {
+        Pengumuman p = ambilAtauGagal(id);
+        Kategori kategori = kategoriRepository.findById(req.idKategori())
+                .orElseThrow(() -> new KategoriTidakDitemukanException(req.idKategori()));
+        mapper.terapkan(req, p, kategori);
+        return mapper.keResponse(p); // tersimpan otomatis saat transaksi selesai
+    }
+
+    @Transactional
     public void hapus(Integer id) {
-        if (!pengumumanRepository.existsById(id)) {
-            throw new RuntimeException("Pengumuman dengan ID " + id + " tidak ditemukan");
-        }
-        pengumumanRepository.deleteById(id);
+        pengumumanRepository.delete(ambilAtauGagal(id));
     }
 
-    // Metode bantu untuk mengubah Entity menjadi DTO sesuai syarat Tugas Mandiri
-    private PengumumanDTO convertToDTO(Pengumuman entity) {
-        PengumumanDTO dto = new PengumumanDTO();
-        dto.setId(entity.getId());
-        dto.setJudul(entity.getJudul());
-        dto.setIsi(entity.getIsi());
-        dto.setTanggalTerbit(entity.getTanggalTerbit());
-        dto.setJumlahDilihat(entity.getJumlahDilihat());
-        
-        // Mengambil nama kategori dengan aman
-        if (entity.getKategori() != null) {
-            dto.setNamaKategori(entity.getKategori().getNama());
-        }
-        
-        // Menghitung jumlah lampiran (solusi untuk menghindari rekursi JSON)
-        if (entity.getDaftarLampiran() != null) {
-            dto.setJumlahLampiran(entity.getDaftarLampiran().size());
-        } else {
-            dto.setJumlahLampiran(0);
-        }
-        
-        return dto;
+    private Pengumuman ambilAtauGagal(Integer id) {
+        return pengumumanRepository.findById(id)
+                .orElseThrow(() -> new PengumumanTidakDitemukanException(id));
     }
 }
