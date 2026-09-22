@@ -1,12 +1,16 @@
 package id.ac.polinema.lumajang.portalku.prodi;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import id.ac.polinema.lumajang.portalku.kurikulum.Kurikulum;
+import id.ac.polinema.lumajang.portalku.pengumuman.Pengumuman;
 
 @Entity
 @Table(name = "program_studi")
@@ -40,4 +44,7 @@ public class Prodi {
         daftarKurikulum.remove(kurikulum);
         kurikulum.setProdi(null);
     }
+
+    @ManyToMany(mappedBy = "prodiDituju", fetch = FetchType.LAZY)
+    private Set<Pengumuman> pengumuman = new HashSet<>();
 }
