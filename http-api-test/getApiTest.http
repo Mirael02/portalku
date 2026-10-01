@@ -1,0 +1,75 @@
+@baseUrl = http://localhost:8080
+
+### 1. Pengujian Halaman & Verifikasi Overlap Data
+GET {{baseUrl}}/api/pengumuman?page=0&size=10
+
+### 2. Pindah ke Halaman Kedua (Memastikan tidak ada data tumpang tindih)
+GET {{baseUrl}}/api/pengumuman?page=1&size=10
+
+### 3. Pengurutan Berdasarkan Field Berpotensi Kembar (Unstable Sorting)
+GET {{baseUrl}}/api/pengumuman?page=0&size=10&sort=tanggalTerbit,desc
+
+### 4. Pengujian Batas Maksimum Ukuran Halaman (Max Page Size)
+GET {{baseUrl}}/api/pengumuman?page=0&size=1000
+
+### 5. Pengujian Error Sorting (Field yang Tidak Ada)
+GET {{baseUrl}}/api/pengumuman?sort=judulPengumuman,desc
+
+### 6. Pencarian berdasarkan Kata Kunci
+GET {{baseUrl}}/api/pengumuman?kataKunci=akademik&page=0&size=10
+
+### 7. Penyaringan berdasarkan Kategori ID
+GET {{baseUrl}}/api/pengumuman?kategoriId=1&page=0&size=10
+
+### 8. Kombinasi Kata Kunci + Kategori + Pagination + Sorting
+GET {{baseUrl}}/api/pengumuman?kataKunci=kegiatan&kategoriId=1&page=0&size=5&sort=tanggalTerbit,asc
+
+@baseUrl = http://localhost:8080
+
+### 9. GET ID Tidak Ada (Ekspektasi: 404 Not Found)
+GET {{baseUrl}}/api/pengumuman/9999
+
+### 10. GET Tipe Parameter Salah (Ekspektasi: 400 Bad Request)
+GET {{baseUrl}}/api/pengumuman/abc
+
+### 11. POST Judul Kosong (Ekspektasi: 422 Unprocessable Entity)
+POST {{baseUrl}}/api/pengumuman
+Content-Type: application/json
+
+{
+  "judul": "",
+  "isi": "Contoh isi pengumuman",
+  "tanggalTerbit": "2026-10-01",
+  "idKategori": 1
+}
+
+### 12. POST JSON Rusak (Ekspektasi: 400 Bad Request)
+POST {{baseUrl}}/api/pengumuman
+Content-Type: application/json
+
+{
+  "judul": "Pengumuman Baru",
+  "isi":
+}
+
+### 13. POST Judul Duplikat (Ekspektasi: 409 Conflict)
+POST {{baseUrl}}/api/pengumuman
+Content-Type: application/json
+
+{
+  "judul": "Pengumuman nomor 1 tentang kegiatan akademik",
+  "isi": "Isi pengumuman duplikat",
+  "tanggalTerbit": "2026-10-01",
+  "idKategori": 1
+}
+
+### 14. POST idKategori Tidak Ada (Ekspektasi: 404 Not Found)
+POST {{baseUrl}}/api/pengumuman
+Content-Type: application/json
+
+{
+  "judul": "Pengumuman Uji Kategori Unik 99",
+  "isi": "Isi pengumuman",
+  "tanggalTerbit": "2026-10-01",
+  "idKategori": 9999
+}

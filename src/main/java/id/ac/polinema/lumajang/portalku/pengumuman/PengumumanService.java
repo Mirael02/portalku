@@ -2,6 +2,8 @@ package id.ac.polinema.lumajang.portalku.pengumuman;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,6 +17,7 @@ import id.ac.polinema.lumajang.portalku.pengumuman.dto.PengumumanRequest;
 import id.ac.polinema.lumajang.portalku.pengumuman.dto.PengumumanResponse;
 import id.ac.polinema.lumajang.portalku.pengumuman.dto.PengumumanRingkasResponse;
 import id.ac.polinema.lumajang.portalku.shared.KategoriTidakDitemukanException;
+import id.ac.polinema.lumajang.portalku.shared.PageResponse;
 import id.ac.polinema.lumajang.portalku.shared.PengumumanTidakDitemukanException;
 import lombok.RequiredArgsConstructor;
 
@@ -27,10 +30,14 @@ public class PengumumanService {
     private final PengumumanMapper mapper;
     private final LampiranRepository lampiranRepository;
 
-    public List<PengumumanRingkasResponse> cariSemua() {
-        return pengumumanRepository.findAllWithKategori().stream()
-                .map(mapper::keRingkas)
-                .toList();
+    public PageResponse<PengumumanRingkasResponse> cariSemua(String kataKunci, Integer kategoriId, Pageable pageable) {
+        Page<Pengumuman> page = pengumumanRepository.cariDenganFilter(
+                (kataKunci != null && !kataKunci.isBlank()) ? kataKunci.trim() : null,
+                kategoriId,
+                pageable);
+
+        // Mengubah Page<Pengumuman> ke PageResponse<PengumumanRingkasResponse>
+        return PageResponse.dari(page.map(mapper::keRingkas));
     }
 
     public PengumumanResponse cariSatu(Integer id) {
@@ -51,7 +58,7 @@ public class PengumumanService {
         Kategori kategori = kategoriRepository.findById(req.idKategori())
                 .orElseThrow(() -> new KategoriTidakDitemukanException(req.idKategori()));
         mapper.terapkan(req, p, kategori);
-        return mapper.keResponse(p); // tersimpan otomatis saat transaksi selesai
+        return mapper.keResponse(p);
     }
 
     @Transactional
@@ -63,7 +70,7 @@ public class PengumumanService {
         return pengumumanRepository.findById(id)
                 .orElseThrow(() -> new PengumumanTidakDitemukanException(id));
     }
-    
+
     public List<LampiranResponse> cariLampiranByPengumuman(Integer pengumumanId) {
         Pengumuman p = ambilAtauGagal(pengumumanId);
         return p.getDaftarLampiran().stream()
@@ -79,11 +86,9 @@ public class PengumumanService {
         lampiran.setNamaBerkas(req.namaBerkas());
         lampiran.setUkuran(req.ukuran());
 
-        // Memanfaatkan method bantu pada entity Pengumuman untuk menjaga relasi dua
-        // arah
         p.tambahLampiran(lampiran);
 
-        lampiranRepository.save(lampiran); // Pastikan LampiranRepository tersedia
+        lampiranRepository.save(lampiran);
         return new LampiranResponse(lampiran.getId(), lampiran.getNamaBerkas(), lampiran.getUkuran());
     }
 
