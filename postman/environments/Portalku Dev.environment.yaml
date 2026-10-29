@@ -1,0 +1,8 @@
+name: Portalku Dev
+values:
+  - key: baseUrl
+    value: 'http://localhost:8081'
+  - key: accessToken
+    secret: true
+  - key: refreshToken
+    value: ''

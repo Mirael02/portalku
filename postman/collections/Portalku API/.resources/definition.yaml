@@ -1,0 +1,18 @@
+$kind: collection
+description: |-
+  API portal informasi akademik - latihan MK Pemrograman Web Lanjut,
+  D3 Teknologi Informasi PSDKU Lumajang.
+
+  Server default: http://localhost:8081 (profil dev).
+  Gunakan variabel {{baseUrl}} untuk mengganti host/port.
+
+  Autentikasi: Bearer JWT. Jalankan request "Login" di folder Autentikasi
+  terlebih dahulu, lalu token akan tersimpan di variabel koleksi {{accessToken}}.
+variables:
+  baseUrl: http://localhost:8081
+  accessToken: ""
+  refreshToken: ""
+auth:
+  type: bearer
+  credentials:
+    token: "{{accessToken}}"

@@ -1,0 +1,31 @@
+$kind: http-request
+name: 'Refresh Token'
+description: |-
+  Perbarui access token menggunakan refresh token yang masih valid.
+  Token baru disimpan otomatis ke variabel koleksi.
+  Endpoint ini tidak ada di openapi.json tetapi tersedia di LayananAuth (segarkan).
+order: 2000
+method: POST
+url: '{{baseUrl}}/api/auth/refresh'
+auth:
+  type: noauth
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "tokenPenyegar": "{{refreshToken}}"
+    }
+scripts:
+  - type: afterResponse
+    language: text/javascript
+    code: |-
+      const res = pm.response.json();
+      if (res.tokenAkses) {
+          pm.collectionVariables.set("accessToken", res.tokenAkses);
+      }
+      if (res.tokenPenyegar) {
+          pm.collectionVariables.set("refreshToken", res.tokenPenyegar);
+      }

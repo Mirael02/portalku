@@ -1,0 +1,14 @@
+$kind: http-request
+name: 'Detail Pengumuman'
+description: |-
+  Dapatkan detail lengkap satu pengumuman berdasarkan ID.
+  GET /api/pengumuman/{id} — publik, tidak perlu token.
+order: 2000
+method: GET
+url: '{{baseUrl}}/api/pengumuman/:id'
+auth:
+  type: noauth
+pathVariables:
+  - key: id
+    value: '1'
+    description: 'ID pengumuman (integer)'

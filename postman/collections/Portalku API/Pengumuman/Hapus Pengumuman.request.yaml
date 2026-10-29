@@ -1,0 +1,10 @@
+$kind: http-request
+url: "{{baseUrl}}/api/pengumuman/:id"
+method: DELETE
+pathVariables:
+  id: "1"
+auth:
+  type: inherit
+  credentials:
+    id: collection-2BCE9e0cdA20dFaad5dbCA9e-bearer
+order: 5000

@@ -8,7 +8,7 @@ CREATE TABLE kategori (
 -- Pastikan tipe dan ukuran data (seperti VARCHAR) cocok dengan di @Column
 CREATE TABLE pengumuman (
     id SERIAL PRIMARY KEY,
-    judul VARCHAR(150) NOT NULL UNIQUE,
+    judul VARCHAR(150) NOT NULL,
     isi TEXT NOT NULL,
     tanggal_terbit DATE NOT NULL,
     jumlah_dilihat INTEGER NOT NULL,

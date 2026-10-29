@@ -1,0 +1,30 @@
+$kind: http-request
+name: Daftar Pengumuman
+description: |-
+  Mengembalikan daftar pengumuman secara berhalaman (paged) dalam bentuk ringkas.
+  Mendukung filter opsional: kataKunci (pencarian teks) dan kategoriId.
+  GET /api/pengumuman — publik, tidak perlu token.
+order: 1000
+method: GET
+url: "{{baseUrl}}/api/pengumuman"
+queryParams:
+  - key: kataKunci
+    value: ""
+    disabled: true
+    description: Filter pencarian teks pada judul/isi pengumuman (opsional)
+  - key: kategoriId
+    value: "1"
+    disabled: true
+    description: Filter berdasarkan ID kategori (opsional)
+  - key: page
+    value: "0"
+    disabled: true
+    description: Nomor halaman (0-based, default 0)
+  - key: size
+    value: "10"
+    disabled: true
+    description: Jumlah item per halaman (default 10)
+  - key: sort
+    value: tanggalTerbit,desc
+    disabled: true
+    description: Urutan hasil (default tanggalTerbit,desc)

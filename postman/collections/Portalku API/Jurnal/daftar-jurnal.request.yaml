@@ -1,0 +1,8 @@
+$kind: http-request
+name: 'Daftar Jurnal'
+description: |-
+  Mengembalikan seluruh data jurnal.
+  GET /api/jurnal — memerlukan autentikasi Bearer JWT.
+order: 1000
+method: GET
+url: '{{baseUrl}}/api/jurnal'

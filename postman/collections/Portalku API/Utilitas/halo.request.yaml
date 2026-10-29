@@ -1,0 +1,12 @@
+$kind: http-request
+name: Halo
+description: |-
+  Health-check sederhana — mengembalikan string konfirmasi bahwa layanan berjalan.
+  GET /api/halo — publik, tidak perlu token.
+order: 2000
+method: GET
+url: "{{baseUrl}}/api/halo"
+auth:
+  type: inherit
+  credentials:
+    id: collection-2BCE9e0cdA20dFaad5dbCA9e-bearer

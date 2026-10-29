@@ -12,6 +12,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,7 +21,10 @@ import lombok.RequiredArgsConstructor;
 @EnableMethodSecurity
 @RequiredArgsConstructor
 public class KonfigurasiKeamanan {
-    private final LayananDetailPengguna layananDetailPengguna;
+
+    private final FilterJwt filterJwt;
+    private final TitikMasukTanpaAutentikasi titikMasukTanpaAutentikasi;
+    private final PenanganAksesDitolak penanganAksesDitolak;
 
     @Bean
     public PasswordEncoder pengkodeSandi() {
@@ -36,17 +40,22 @@ public class KonfigurasiKeamanan {
     @Bean
     public SecurityFilterChain rantaiFilter(HttpSecurity http) throws Exception {
         return http
-                .csrf(csrf -> csrf.disable())
-                .sessionManagement(s -> s.sessionCreationPolicy(
-                        SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html",
-                                "/v3/api-docs/**")
-                        .permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/pengumuman/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/berita/**").permitAll()
-                        .anyRequest().authenticated())
-                .build();
+            .csrf(csrf -> csrf.disable())
+            .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .exceptionHandling(e -> e
+                .authenticationEntryPoint(titikMasukTanpaAutentikasi)
+                .accessDeniedHandler(penanganAksesDitolak)
+            )
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/pengumuman/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/berita/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/pengumuman/*/dilihat").permitAll() // Sesuai matriks peran publik
+                .requestMatchers("/api/pengguna/**").hasRole("ADMIN")
+                .anyRequest().authenticated()
+            )
+            .addFilterBefore(filterJwt, UsernamePasswordAuthenticationFilter.class) // Daftarkan Filter JWT
+            .build();
     }
 }

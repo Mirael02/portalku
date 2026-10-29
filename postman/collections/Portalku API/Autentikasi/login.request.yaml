@@ -1,0 +1,30 @@
+$kind: http-request
+name: Login
+description: |-
+  Masuk dengan email dan kata sandi untuk memperoleh JWT access token
+  dan refresh token. Token disimpan otomatis ke variabel koleksi.
+order: 1000
+method: POST
+url: "{{baseUrl}}/api/auth/login"
+auth:
+  type: noauth
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+        "email": "admin@example.com",
+        "sandi": "password123"
+    }
+scripts:
+  - type: afterResponse
+    code: |-
+      const res = pm.response.json();
+      if (res.tokenAkses) {
+          pm.collectionVariables.set("accessToken", res.tokenAkses);
+      }
+      if (res.tokenPenyegar) {
+          pm.collectionVariables.set("refreshToken", res.tokenPenyegar);
+      }
+    language: text/javascript

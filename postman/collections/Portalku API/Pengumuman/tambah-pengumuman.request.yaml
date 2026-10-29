@@ -1,0 +1,21 @@
+$kind: http-request
+name: 'Tambah Pengumuman'
+description: |-
+  Menambah pengumuman baru. Memerlukan autentikasi Bearer JWT.
+  POST /api/pengumuman — 201 Created jika berhasil.
+  Validasi: judul unik (409), data tidak valid (422).
+order: 3000
+method: POST
+url: '{{baseUrl}}/api/pengumuman'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "judul": "Jadwal UTS Semester Genap 2026/2027",
+      "isi": "Pelaksanaan UTS akan dimulai pada tanggal 15 Oktober 2026. Mahasiswa diwajibkan hadir tepat waktu.",
+      "tanggalTerbit": "2026-09-22",
+      "idKategori": 1
+    }

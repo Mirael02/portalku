@@ -1,0 +1,20 @@
+$kind: http-request
+name: Logout
+description: |-
+  Cabut refresh token (logout). Endpoint ini tidak ada di openapi.json
+  tetapi tersedia di LayananAuth (cabut).
+order: 3000
+method: POST
+url: "{{baseUrl}}/api/auth/logout"
+auth:
+  type: bearer
+  credentials:
+    token: "{{accessToken}}"
+headers:
+  Content-Type: application/json
+body:
+  type: json
+  content: |-
+    {
+        "tokenPenyegar": "{{refreshToken}}"
+    }

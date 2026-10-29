@@ -1,0 +1,14 @@
+$kind: http-request
+name: Percobaan
+description: |-
+  Endpoint percobaan/debug — mengembalikan seluruh data pengumuman mentah (raw entity).
+  GET /api/percobaan — memerlukan autentikasi Bearer JWT.
+  Catatan: endpoint ini sengaja menggunakan query langsung ke repository (tanpa DTO)
+  sebagai latihan; tidak direkomendasikan untuk produksi.
+auth:
+  type: inherit
+  credentials:
+    id: collection-2BCE9e0cdA20dFaad5dbCA9e-bearer
+order: 3000
+method: GET
+url: "{{baseUrl}}/api/percobaan"

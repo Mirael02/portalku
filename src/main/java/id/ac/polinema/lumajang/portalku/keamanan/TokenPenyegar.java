@@ -20,7 +20,7 @@ public class TokenPenyegar {
     private String token;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "pengguna_id", nullable = false)
+    @JoinColumn(name = "id_pengguna", nullable = false)
     private Pengguna pengguna;
 
     @Column(nullable = false)

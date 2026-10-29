@@ -1,0 +1,19 @@
+$kind: http-request
+name: 'Tambah Jurnal'
+description: |-
+  Menambah data jurnal baru.
+  POST /api/jurnal — memerlukan autentikasi Bearer JWT.
+order: 3000
+method: POST
+url: '{{baseUrl}}/api/jurnal'
+headers:
+  - key: Content-Type
+    value: application/json
+body:
+  type: json
+  content: |-
+    {
+      "judul": "Implementasi Machine Learning pada Sistem Informasi Akademik",
+      "penerbit": "Jurnal Teknologi Informasi PSDKU",
+      "tahunTerbit": 2026
+    }

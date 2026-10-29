@@ -1,0 +1,12 @@
+$kind: http-request
+name: Daftar Lampiran Pengumuman
+description: |-
+  Dapatkan daftar lampiran dari suatu pengumuman.
+  GET /api/pengumuman/{id}/lampiran — publik, tidak perlu token.
+order: 1000
+method: GET
+url: "{{baseUrl}}/api/pengumuman/:id/lampiran"
+pathVariables:
+  - key: id
+    value: "1"
+    description: ID pengumuman (integer)

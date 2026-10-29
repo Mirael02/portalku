@@ -1,0 +1,9 @@
+$kind: http-request
+name: Info Aplikasi
+description: |-
+  Mengembalikan informasi aplikasi: nama, versi, profil aktif, pesan sambutan,
+  dan batas maksimum item.
+  GET /api/info — memerlukan autentikasi Bearer JWT.
+order: 1000
+method: GET
+url: "{{baseUrl}}/api/info"

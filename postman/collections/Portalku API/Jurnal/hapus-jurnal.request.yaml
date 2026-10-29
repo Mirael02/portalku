@@ -1,0 +1,12 @@
+$kind: http-request
+name: 'Hapus Jurnal'
+description: |-
+  Menghapus jurnal berdasarkan ID.
+  DELETE /api/jurnal/{id} — memerlukan autentikasi Bearer JWT.
+order: 4000
+method: DELETE
+url: '{{baseUrl}}/api/jurnal/:id'
+pathVariables:
+  - key: id
+    value: '1'
+    description: 'ID jurnal (integer)'

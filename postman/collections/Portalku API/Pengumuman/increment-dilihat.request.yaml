@@ -1,0 +1,13 @@
+$kind: http-request
+name: 'Tambah Jumlah Dilihat'
+description: |-
+  Menambah jumlah dilihat (view count) pengumuman sebanyak 1.
+  PATCH /api/pengumuman/{id}/dilihat — 204 No Content jika berhasil.
+  Memerlukan autentikasi Bearer JWT.
+order: 4000
+method: PATCH
+url: '{{baseUrl}}/api/pengumuman/:id/dilihat'
+pathVariables:
+  - key: id
+    value: '1'
+    description: 'ID pengumuman (integer)'

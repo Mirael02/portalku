@@ -1,0 +1,12 @@
+$kind: http-request
+name: 'Detail Jurnal'
+description: |-
+  Dapatkan satu jurnal berdasarkan ID.
+  GET /api/jurnal/{id} — memerlukan autentikasi Bearer JWT.
+order: 2000
+method: GET
+url: '{{baseUrl}}/api/jurnal/:id'
+pathVariables:
+  - key: id
+    value: '1'
+    description: 'ID jurnal (integer)'
